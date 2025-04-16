@@ -5,6 +5,8 @@
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>NEXT STEP</title>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-v8QQ0YQ3H4K6Ic3PJkym91KoeNT5S3PnDKvqnwqFD1oiqIl653crGZplPdU5KKtHjO0QKcQ2aUlQZYjHczkmGw==" 
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
           <link rel="stylesheet" href="next.css">
 </head>
 
@@ -13,14 +15,16 @@
           <!-- Navbar -->
           <nav class="navbar">
                     <div class="logo">
-                              <img src="C:\Users\1431r\Desktop\ship\int.png" alt="Logo">
+                              <img src="image/int.png" alt="Logo">
                               NextStep
                     </div>
                     <div class="menu">
-                              <!--a href="contact.html">Contact Us</a-->
-                              <a href="about.html">About Us</a>
+                              <a href="T&C.html">Terms and Conditios</a>
+                              <a href="About1.html">About Us</a>
+                    
                     </div>
                     <a href="login.html" class="login-btn">Login/Signup →</a>
+                    <a href="admin-login.html" class="login-btn">Admin Login →</a>
           </nav>
 
           <!-- Hero Section -->
@@ -37,10 +41,25 @@
                     </div>
                     <div class="image-section">
                               <div class="curved-background"></div>
-                              <img src="https://source.unsplash.com/500x400/?student,laptop" alt="Student">
+                              <img src="image/pic.jpeg" alt="Student">
                     </div>
           </div>
 
+          <!-- Floating Chat Icon -->
+                <div id="chatIcon" onclick="toggleChat()">
+                      💬
+                </div>
+          <!-- Chat Box -->
+                <div id="chatBox">
+                  <iframe src="chart.html" frameborder="0"></iframe>
+                </div>
+                    
+          <!-- Feedback Floating Image -->
+          <div class="feedback">
+              <a href="feedback.html" id="feedback-button">
+                  <img src="image/feedback.png" alt="Feedback" />
+              </a>
+          </div>
           <!-- Footer Section -->
           <div class="footer">
                     <p>The Future of Work is Changing. Are You Ready?</p>
@@ -74,7 +93,7 @@
                               </div>
                     </div>
           </div>
-
+  
           <div class="results-section">
                     <h2>Proven Results: <span>Global Impact</span></h2>
 
@@ -114,19 +133,19 @@
 
                     <div class="logos-container">
                               <div class="logos-slider">
-                                        <div class="logo-box"><img src="logo1.png" alt="Partner 1"></div>
-                                        <div class="logo-box"><img src="logo2.png" alt="Partner 2"></div>
-                                        <div class="logo-box"><img src="logo3.png" alt="Partner 3"></div>
-                                        <div class="logo-box"><img src="logo4.png" alt="Partner 4"></div>
-                                        <div class="logo-box"><img src="logo5.png" alt="Partner 5"></div>
-                                        <div class="logo-box"><img src="logo6.png" alt="Partner 6"></div>
-                                        <!-- Repeat logos for smooth infinite scrolling -->
-                                        <div class="logo-box"><img src="logo1.png" alt="Partner 1"></div>
-                                        <div class="logo-box"><img src="logo2.png" alt="Partner 2"></div>
-                                        <div class="logo-box"><img src="logo3.png" alt="Partner 3"></div>
-                                        <div class="logo-box"><img src="logo4.png" alt="Partner 4"></div>
-                                        <div class="logo-box"><img src="logo5.png" alt="Partner 5"></div>
-                                        <div class="logo-box"><img src="logo6.png" alt="Partner 6"></div>
+                                <div class="logo-box"><img src="image/Samsung.jpeg" alt="Partner 1"></div>
+                                <div class="logo-box"><img src="image/Acer.jpeg" alt="Partner 2"></div>
+                                <div class="logo-box"><img src="image/Deloitte.jpeg" alt="Partner 3"></div>
+                                <div class="logo-box"><img src="image/IBM.jpeg" alt="Partner 4"></div>
+                                <div class="logo-box"><img src="image/Infosys.jpeg" alt="Partner 5"></div>
+                                <div class="logo-box"><img src="image/HCL.jpeg" alt="Partner 6"></div>
+                                <!-- Repeat logos for smooth infinite scrolling -->
+                                <div class="logo-box"><img src= "image/bv.jpg" alt="Partner 1"></div>
+                                <div class="logo-box"><img src="image/Lenovo.jpeg"alt="Partner 2"></div>
+                                <div class="logo-box"><img src="image/Ola.jpeg"alt="Partner 3"></div>
+                                <div class="logo-box"><img src="image/Rolls-Royce.jpeg"alt="Partner 4"></div>
+                                <div class="logo-box"><img src="image/UBL.jpeg" alt="Partner 5"></div>
+                                <div class="logo-box"><img src="image/tata.jpeg" alt="Partner 6"></div>
                               </div>
                     </div>
           </div>
@@ -147,12 +166,13 @@
                               </div-->
                     </div>
 
+
                     <div class="wave-background"></div>
                     <div class="image-container">
-                              <img src="students.png" alt="Students with tablet">
+                              <img src="image/pic1.avif" alt="Students with tablet">
                     </div>
           </div>
-
+  
 
           <footer class="footer">
                     <div class="footer-container">
@@ -160,10 +180,10 @@
                                         <h2>VIRTUAL INTERNSHIPS</h2>
                                         <p class="featured">As featured on:</p>
                                         <div class="featured">
-                                                  <img src="bbc.png" alt="BBC">
-                                                  <img src="forbes.png" alt="Forbes">
-                                                  <img src="techcrunch.png" alt="TechCrunch">
-                                                  <img src="thetimes.png" alt="The Times">
+                                          <img src="image/BBC News.jpeg" alt="BBC">
+                                          <img src="image/Nestle.jpeg" alt="TechCrunch">
+                                          <img src="image/Newspapers.jpeg" alt="The Times">
+                                          <img src="image/download.jpeg" alt="Forbes">
                                         </div>
                               </div>
 
@@ -179,30 +199,43 @@
                                                   <a href="#">Join Us</a>
                                                   <a href="#">Press</a>
                                                   <a href="#">Blog</a>
-                                                  <a href="#">Contact Us</a>
+                                                  
                                         </div>
                               </div>
 
                               <div class="social-links">
-                                        <a href="#"><img src="facebook.png" alt="Facebook"> Facebook</a>
-                                        <a href="#"><img src="instagram.png" alt="Instagram"> Instagram</a>
-                                        <a href="#"><img src="twitter.png" alt="Twitter"> Twitter</a>
-                                        <a href="#"><img src="linkedin.png" alt="LinkedIn"> LinkedIn</a>
-                                        <a href="#"><img src="youtube.png" alt="YouTube"> YouTube</a>
+                                <a href="#"><h1>Contact Us</h1></a>
+                                    <a href="#"><img src="image/Instagram.jpeg" alt="Instagram"> Instagram</a>
+                                    <a href="#"><img src="image/X Corp_.jpeg" alt="Twitter"> Twitter</a>
+                                    <a href="https://in.linkedin.com/"><img src="image/LinkedIn.jpeg" alt="LinkedIn"> LinkedIn</a>
+                                    <a href="https://www.youtube.com/"><img src="image/Youtube.jpeg" alt="YouTube"> YouTube</a>
                               </div>
                     </div>
 
                     <div class="footer-bottom">
                               © 2025 Virtual Internships. All rights reserved.
-                              <a href="#">Privacy Policy</a> |
+                              <a href="T&C.html">Privacy Policy</a> |
                               <a href="#">Terms of Service</a>
                     </div>
           </footer>
 
 
           <script src="next.js"></script>
+          <script>
+           function toggleChat() {
+                const chatBox = document.getElementById('chatBox');
+                chatBox.style.display = chatBox.style.display === 'block' ? 'none' : 'block';
+            }
+
+            window.addEventListener('scroll', function () {
+                    const button = document.getElementById('feedback-button');
+                    let offset = window.scrollY;
+                    button.style.transform = `translateY(${offset * 0.05}px)`;
+             });
+          </script>
         
          
+          
         
 
 </body>

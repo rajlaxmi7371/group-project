@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View Applications</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .application-card {
+      background: white;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .application-card h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #007bff;
+    }
+
+    .application-card p {
+      margin: 5px 0;
+    }
+
+    .download-btn {
+      background: #28a745;
+      color: white;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .download-btn:hover {
+      background-color: #218838;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>All Applications</h1>
+
+  <div id="applications"></div>
+
+  <script>
+    async function loadApplications() {
+      try {
+        const res = await fetch('/api/applications');
+        const data = await res.json();
+        const container = document.getElementById("applications");
+  
+        if (data.length === 0) {
+          container.innerHTML = "<p>No applications found.</p>";
+          return;
+        }
+  
+        container.innerHTML = data.map(app => `
+          <div class="application-card" data-id="${app._id}">
+            <h3>${app.firstName} ${app.lastName}</h3>
+            <p><strong>Email:</strong> ${app.email}</p>
+            <p><strong>Phone:</strong> ${app.phone}</p>
+            <p><strong>City:</strong> ${app.city}</p>
+            <p><strong>Gender:</strong> ${app.gender}</p>
+            <p><strong>Type:</strong> ${app.type}</p>
+            <p class="status"><strong>Status:</strong> ${app.Status || 'Pending'}</p>
+            <a class="download-btn" href="/uploads/${app.resume}" download>Download Resume</a><br><br>
+            <button onclick="updateStatus('${app._id}', 'Accepted')">✅ Accept</button>
+            <button onclick="updateStatus('${app._id}', 'Rejected')">❌ Reject</button>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error("❌ Failed to fetch applications:", err);
+        document.getElementById("applications").innerHTML = "<p>Error loading applications.</p>";
+      }
+    }
+  
+    async function updateStatus(id, newStatus) {
+      try {
+        const res = await fetch(`/api/applications/${id}/status`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ Status: newStatus })
+        });
+        const result = await res.json();
+        alert(result.message);
+        loadApplications();
+      } catch (err) {
+        alert("Failed to update status.");
+      }
+    }
+   // const apps = await Application.find({});
+
+  
+    loadApplications();
+  </script>
+  
+</body>
+</html>

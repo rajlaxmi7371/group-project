@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-Step Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 30px 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .form-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 700px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .form-header p {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .form-header h1 {
+      font-size: 28px;
+      margin: 5px 0 0;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      flex: 1;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .optional {
+      color: gray;
+      font-weight: normal;
+      font-size: 13px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    .contact-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .contact-row input[type="text"]:first-child {
+      width: 80px;
+    }
+
+    .gender-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .gender-buttons button {
+      padding: 10px 16px;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s ease;
+    }
+
+    .gender-buttons button.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    .btn,
+    .btn-next {
+      background-color: #007bff;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 30px auto 0;
+      display: block;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-cancel {
+      background-color: #e0e0e0;
+      color: #000;
+    }
+
+    .info {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    .info::before {
+      content: 'ℹ️';
+      margin-right: 6px;
+    }
+
+    .buttons {
+      margin-top: 25px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .subtext {
+      font-size: 13px;
+      color: gray;
+      margin-top: -10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="applyform" enctype="multipart/form-data" method="POST" action="/apply">
+    <!-- STEP 1: BASIC FORM -->
+    <div class="form-container" id="step1">
+      <div class="form-header">
+        <p>Hi there! 👋</p>
+        <h1>Let's get started</h1>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label for="first-name">First name</label>
+          <input type="text" id="first-name" name="firstName" required>
+        </div>
+        <div class="form-group">
+          <label for="last-name">Last name <span class="optional">(Optional)</span></label>
+          <input type="text" id="last-name" name="lastName">
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+  
+      <div class="form-group">
+        <label>Contact number</label>
+        <div class="contact-row">
+          <input type="text" value="+91" readonly>
+          <input type="tel" id="phone" name="phone" required>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="city">Current city</label>
+        <p class="subtext">To connect you with opportunities closer to you</p>
+        <input type="text" id="city" name="city">
+      </div>
+  
+      <div class="form-group">
+        <label>Gender</label>
+        <div class="gender-buttons" id="gender-buttons">
+          <button type="button" data-gender="Female">👩 Female</button>
+          <button type="button" data-gender="Male">👨 Male</button>
+          <button type="button" data-gender="Other">⭐ Others</button>
+        </div>
+        <input type="hidden" id="gender" name="gender">
+      </div>
+  
+      <button type="button" class="btn-next" onclick="goToStep2()">Next</button>
+    </div>
+  
+    <!-- STEP 2: UPLOAD FORM -->
+    <div class="upload-container hidden" id="step2">
+      <h2>Upload CV/Resume</h2>
+      <p class="info">Choose a file that matches the selected type.</p>
+  
+      <label for="type">Type<span style="color: red;">*</span></label>
+      <select id="type" name="type" required>
+        <option value="">Select Type ...</option>
+        <option value="pdf">PDF</option>
+        <option value="image">Image</option>
+        <option value="doc">Document</option>
+      </select>
+  
+      <label for="file">File<span style="color: red;">*</span></label>
+      <input type="file"  name="resume" required>
+  
+      <!--label for="name">Name<span style="color: red;">*</span></label>
+      <input type="text" id="name" name="Name" required-->
+  
+      <label for="desc">Status</label>
+      <input type="text" id="desc" name="Status">
+
+      <label for="desc">Internship</label>
+      <input type="hidden"  name="internshipId" id="internshipId">
+  
+      <div class="buttons">
+        <button type="submit" class="btn">Submit</button>
+        <button type="button" class="btn btn-cancel" onclick="goBack()">Back</button>
+      </div>
+    </div>
+  </form>
+  
+  <script>
+    if (!localStorage.getItem("isLoggedIn")) {
+  window.location.href = "login.html";
+}
+    const genderButtons = document.querySelectorAll('.gender-buttons button');
+    const genderInput = document.getElementById('gender');
+  
+    genderButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        genderButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        genderInput.value = button.dataset.gender;
+      });
+    });
+  
+    function goToStep2() {
+      document.getElementById("step1").classList.add("hidden");
+      document.getElementById("step2").classList.remove("hidden");
+    }
+  
+    function goBack() {
+      document.getElementById("step2").classList.add("hidden");
+      document.getElementById("step1").classList.remove("hidden");
+    }
+
+   // Prefill email
+document.addEventListener("DOMContentLoaded", () => {
+  const storedEmail = localStorage.getItem("email");
+  if (storedEmail) {
+    document.getElementById("email").value = storedEmail;
+    document.getElementById("email").readOnly = true;
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get("id");
+  if (id) {
+    document.getElementById("internshipId").value = id;
+  }
+});
+  
+document.getElementById('applyform').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const form = document.getElementById('applyform');
+  const formData = new FormData(form);
+
+  try {
+    const response = await fetch('/apply', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+    alert(result.message || "Application submitted!");
+    
+    // ✅ Redirect to internships page after applying
+    if (response.ok) window.location.href = "interns.html";
+
+  } catch (err) {
+    console.error(err);
+    alert('Something went wrong.');
+  }
+});
+
+  </script>
+  
+  </body>
+  </html>

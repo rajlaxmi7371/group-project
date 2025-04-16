@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Stats | NEXTSTEP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background: #222;
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .logout-btn {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 2rem;
+    }
+
+    canvas {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <h1>Admin Statistics</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="container">
+    <h2>📊 Overall Analytics Overview</h2>
+    <canvas id="statsChart" width="400" height="200"></canvas>
+  </div>
+
+  <script>
+    async function loadChart() {
+      try {
+        const res = await fetch('/api/admin/stats', { credentials: "include" });
+        const stats = await res.json();
+
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Internships', 'Applications', 'Users', 'Featured Feedbacks'],
+            datasets: [{
+              label: 'Total Count',
+              data: [
+                stats.internships,
+                stats.applications,
+                stats.users,
+                stats.featuredFeedbacks
+              ],
+              backgroundColor: ['#007bff', '#28a745', '#ffc107', '#17a2b8'],
+              borderRadius: 10
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  stepSize: 1
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                display: false
+              }
+            }
+          }
+        });
+
+      } catch (err) {
+        console.error("Failed to load stats:", err);
+        alert("Could not fetch admin stats.");
+      }
+    }
+
+    function logout() {
+      fetch('/logout')
+        .then(() => {
+          localStorage.clear();
+          window.location.href = "admin-login.html";
+        });
+    }
+
+    loadChart();
+  </script>
+</body>
+</html>

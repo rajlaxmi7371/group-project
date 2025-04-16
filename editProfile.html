@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Profile</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Edit Profile</h2>
+    <form id="editForm">
+      <input type="text" id="editUsername" placeholder="Username" required><br>
+      <input type="email" id="editEmail" placeholder="Email" required><br>
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (user) {
+      document.getElementById("editUsername").value = user.username || "";
+      document.getElementById("editEmail").value = user.email || "";
+    }
+
+    document.getElementById("editForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const updatedUser = {
+        username: document.getElementById("editUsername").value,
+        email: document.getElementById("editEmail").value,
+      };
+
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      alert("Profile updated successfully!");
+      window.location.href = "home.html";
+    });
+  </script>
+</body>
+</html>

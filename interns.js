@@ -1,60 +1,79 @@
-document.addEventListener("DOMContentLoaded", async () => {
-    const container = document.getElementById("internshipsContainer");
-    const searchInput = document.getElementById("searchInput");
-    const clearBtn = document.getElementById("clearBtn");
+let internships = [];
 
-    let internships = []; // Store fetched internships
+async function fetchInternships() {
+  const res = await fetch("/api/internships");
+  const data = await res.json();
 
-    try {
-        const response = await fetch("/internships");
-        internships = await response.json();
-        displayInternships(internships);
-    } catch (error) {
-        console.error("❌ Error loading internships:", error);
-    }
+  if (internships.length && data.length > internships.length) {
+    alert("🎉 New internship added!");
+  }
 
-    // Function to display internships
-    function displayInternships(filteredInternships) {
-        container.innerHTML = ""; // Clear old content
+  internships = data;
+  renderInternships(data);
+}
 
-        if (filteredInternships.length === 0) {
-            container.innerHTML = "<p>No internships found.</p>";
-            return;
-        }
+function renderInternships(data) {
+  const container = document.getElementById("internship-list");
+  container.innerHTML = "";
 
-        filteredInternships.forEach(internship => {
-            const card = document.createElement("div");
-            card.classList.add("internship-card");
-            card.innerHTML = `
-                <h3>${internship.title}</h3>
-                <p><strong>Company:</strong> ${internship.company}</p>
-                <p><strong>Location:</strong> ${internship.location}</p>
-                <p>${internship.description}</p>
-                <p><small>Posted on: ${new Date(internship.postedAt).toLocaleDateString()}</small></p>
-                <button onclick="viewDetails('${internship._id}')">View Details</button>
-            `;
-            container.appendChild(card);
-        });
-    }
+  data.forEach((i) => {
+    const card = document.createElement("div");
+    card.className = "internship-card";
 
-    // Search function
-    searchInput.addEventListener("input", () => {
-        const searchTerm = searchInput.value.toLowerCase();
+    card.innerHTML = `
+      <h3>${i.title}</h3>
+      <p><strong>Company:</strong> ${i.company}</p>
+      <p><strong>Location:</strong> ${i.location}</p>
+      <p><strong>Stipend:</strong> ${i.stipend}</p>
+      ${i.duration ? `<p><strong>Duration:</strong> ${i.duration}</p>` : ""}
+      ${i.skills && i.skills.length ? `<p><strong>Skills:</strong> ${i.skills.join(', ')}</p>` : ""}
+      ${i.applyBy ? `<p><strong>Apply By:</strong> ${new Date(i.applyBy).toLocaleDateString()}</p>` : ""}
+      ${i.postedOn ? `<p><strong>Posted On:</strong> ${new Date(i.postedOn).toLocaleDateString()}</p>` : ""}
+      ${i.category ? `<p><strong>Category:</strong> ${i.category}</p>` : ""}
+      ${i.description ? `<p><strong>Description:</strong> ${i.description}</p>` : ""}
+      ${i.openings ? `<p><strong>Openings:</strong> ${i.openings}</p>` : ""}
+      <p><strong>Last Updated:</strong> ${new Date(i.updatedAt).toLocaleDateString()}</p>
+      <a href="apply.html?id=${i._id}" class="btn-apply">Click Me</a>
+    `;
 
-        const filteredInternships = internships.filter(internship =>
-            internship.title.toLowerCase().includes(searchTerm) ||
-            internship.company.toLowerCase().includes(searchTerm) ||
-            internship.location.toLowerCase().includes(searchTerm) ||
-            internship.description.toLowerCase().includes(searchTerm)
-        );
+    container.appendChild(card);
+  });
+}
 
-        displayInternships(filteredInternships);
-    });
-
-    // Clear search
-    clearBtn.addEventListener("click", () => {
-        searchInput.value = "";
-        displayInternships(internships);
-    });
+document.getElementById("search-input").addEventListener("input", function () {
+  const searchText = this.value.toLowerCase();
+  const filtered = internships.filter(i =>
+    i.title.toLowerCase().includes(searchText)
+  );
+  renderInternships(filtered);
 });
+
+document.getElementById("clear-search").addEventListener("click", function () {
+  document.getElementById("search-input").value = "";
+  renderInternships(internships);
+});
+
+// This fetch assumes you have a route like `/api/user/profile` that sends user data
+async function loadUserData() {
+  try {
+         const res = await fetch('/api/user/profile', {
+         method: 'GET',
+         credentials: 'include'
+       });
+       const data = await res.json();
+       if (res.ok) {
+         document.getElementById('welcome-name').textContent = data.username;
+       } else {
+               window.location.href = '/login.html';
+              }
+       } catch (err) {
+                     console.error('❌ Error loading user profile:', err);
+                     window.location.href = '/login.html';
+                     }
+       }
+       window.onload = async function () {
+        await loadUserData();     // loads user info
+        fetchInternships();       // then loads internship cards
+       };
+
 

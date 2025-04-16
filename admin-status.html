@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Analytics Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    .navbar {
+      background-color: #222;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar h1 {
+      margin: 0;
+    }
+
+    .logout-btn {
+      background: #ff4d4d;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .filters {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .stat-cards {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: #f1f1f1;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      min-width: 200px;
+      margin: 10px;
+    }
+
+    .stat-card h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    .stat-card p {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #007bff;
+      margin: 5px 0 0;
+    }
+
+    canvas {
+      margin: 20px 0;
+      max-height: 280px;
+    }
+
+    button.export-btn {
+      background: #28a745;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      canvas {
+        width: 100% !important;
+        height: auto !important;
+      }
+      .stat-cards {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <h1>Admin Analytics</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="container" id="dashboard-content">
+    <div class="filters">
+      <label>Select Date Range: </label>
+      <input type="date" id="startDate" />
+      <input type="date" id="endDate" />
+      <button onclick="loadCharts()">Apply</button>
+      <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+      <button class="export-btn" onclick="exportPDF()">Export PDF</button>
+    </div>
+
+    <div class="stat-cards" id="statCards"></div>
+
+    <h2>📊 Total Overview</h2>
+    <canvas id="barChart" height="180"></canvas>
+
+    <h2>📈 Internship Growth</h2>
+    <canvas id="lineChart"></canvas>
+
+    <h2>📍 Feedback Type Distribution</h2>
+    <canvas id="pieChart"></canvas>
+  </div>
+
+  <script>
+    let autoRefreshInterval;
+
+    async function loadCharts() {
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+      let url = '/api/admin/stats';
+      if (start && end) url += `?start=${start}&end=${end}`;
+
+      const res = await fetch(url, { credentials: 'include' });
+      const stats = await res.json();
+
+      document.getElementById('barChart').remove();
+      document.getElementById('lineChart').remove();
+      document.getElementById('pieChart').remove();
+
+      const bar = document.createElement('canvas');
+      bar.id = 'barChart';
+      bar.height = 180;
+      document.querySelector('.container').insertBefore(bar, document.querySelector('h2:nth-of-type(2)'));
+
+      const line = document.createElement('canvas');
+      line.id = 'lineChart';
+      document.querySelector('.container').insertBefore(line, document.querySelector('h2:nth-of-type(3)'));
+
+      const pie = document.createElement('canvas');
+      pie.id = 'pieChart';
+      document.querySelector('.container').appendChild(pie);
+
+      const statCardsHTML = `
+        <div class="stat-card"><h3>Internships</h3><p>${stats.internships}</p></div>
+        <div class="stat-card"><h3>Applications</h3><p>${stats.applications}</p></div>
+        <div class="stat-card"><h3>Users</h3><p>${stats.users}</p></div>
+        <div class="stat-card"><h3>Featured Feedbacks</h3><p>${stats.featuredFeedbacks}</p></div>
+      `;
+      document.getElementById('statCards').innerHTML = statCardsHTML;
+
+      new Chart(bar.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Internships', 'Applications', 'Users', 'Featured Feedbacks'],
+          datasets: [{
+            label: 'Total Count',
+            data: [stats.internships, stats.applications, stats.users, stats.featuredFeedbacks],
+            backgroundColor: ['#007bff', '#28a745', '#ffc107', '#17a2b8'],
+            borderRadius: 8,
+            maxBarThickness: 50,
+            barPercentage: 0.5,
+            categoryPercentage: 0.5
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+      });
+
+      new Chart(line.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: stats.internshipDates.map(d => d.date),
+          datasets: [{
+            label: 'Internships Added',
+            data: stats.internshipDates.map(d => d.count),
+            fill: false,
+            borderColor: '#007bff',
+            tension: 0.3
+          }]
+        },
+        options: { responsive: true }
+      });
+
+      new Chart(pie.getContext('2d'), {
+        type: 'pie',
+        data: {
+          labels: ['Featured', 'Regular'],
+          datasets: [{
+            data: [stats.featuredFeedbacks, stats.totalFeedbacks - stats.featuredFeedbacks],
+            backgroundColor: ['#17a2b8', '#6c757d']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const value = context.raw;
+                  const percent = ((value / total) * 100).toFixed(1);
+                  return `${context.label}: ${value} (${percent}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function exportCSV() {
+      const rows = [
+        ['Metric', 'Count'],
+        ['Internships', '100'],
+        ['Applications', '200'],
+        ['Users', '150'],
+        ['Featured Feedbacks', '25']
+      ];
+      let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+      const link = document.createElement("a");
+      link.setAttribute("href", encodeURI(csvContent));
+      link.setAttribute("download", "admin-stats.csv");
+      document.body.appendChild(link);
+      link.click();
+    }
+
+    async function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF("p", "mm", "a4");
+      const container = document.getElementById("dashboard-content");
+      await html2canvas(container).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save("admin-dashboard.pdf");
+      });
+    }
+
+    function logout() {
+      fetch('/logout').then(() => {
+        window.location.href = 'admin-login.html';
+      });
+    }
+
+    loadCharts();
+    autoRefreshInterval = setInterval(loadCharts, 60000);
+  </script>
+</body>
+</html>

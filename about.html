@@ -9,19 +9,36 @@
 </head>
 
 <body>
-
+  <div id="welcome-user" style="text-align: center; margin: 10px 0 0; padding: 20px; font-weight: bold; font-size: 1.3rem; color: #ffb6c1; background-color: #C599B6;">
+    Welcome, <span id="welcome-name">User</span> 👏
+  </div>
+  
+        <nav class="navbar">
           <!-- Navbar -->
-          <nav class="navbar">
+          <div class="nav-right">
                     <div class="logo">
-                              <img src="C:\Users\1431r\Desktop\ship\int.png" alt="Logo">
+                               <img src="image/int.png" alt="Logo">
                               NextStep
                     </div>
-                    <div class="menu">
-                              <a href="index.html">Home</a>
-                              <a href="contact.html">Contact Us</a>
-                    </div>
-                    <a href="#" class="login-btn">Login/Signup →</a>
+
+                        <div class="menu">
+                              <a href="home.html">Home</a>
+                              <a href="user-dashboard.html">DashBoard</a>
+                              <!--span id="navUsername"></span-->
+                              <a href="resource.html">Preparation</a>
+                              <a href="T&C.html">Terms and Conditions</a>
+                              <a href="Contact.html">Contact</a>
+
+                              
+                             
+                        </div>
+      
+                     <a href="logout.html" class="login-btn">LogOut →</a>       
+            </div>
+
           </nav>
+
+          <div style="margin-top: 100px;"></div>
 
           <!-- About Us Section -->
           <div class="about-section">
@@ -74,10 +91,10 @@
                                         <h2>VIRTUAL INTERNSHIPS</h2>
                                         <p class="featured">As featured on:</p>
                                         <div class="featured">
-                                                  <img src="bbc.png" alt="BBC">
-                                                  <img src="forbes.png" alt="Forbes">
-                                                  <img src="techcrunch.png" alt="TechCrunch">
-                                                  <img src="thetimes.png" alt="The Times">
+                                          <img src="image/BBC News.jpeg" alt="BBC">
+                                          <img src="image/download.jpeg" alt="Forbes">
+                                          <img src="image/Nestle.jpeg" alt="TechCrunch">
+                                          <img src="image/Newspapers.jpeg" alt="The Times">
                                         </div>
                               </div>
 
@@ -93,16 +110,16 @@
                                                   <a href="#">Join Us</a>
                                                   <a href="#">Press</a>
                                                   <a href="#">Blog</a>
-                                                  <a href="#">Contact Us</a>
+                                                  
                                         </div>
                               </div>
 
                               <div class="social-links">
-                                        <a href="#"><img src="facebook.png" alt="Facebook"> Facebook</a>
-                                        <a href="#"><img src="instagram.png" alt="Instagram"> Instagram</a>
-                                        <a href="#"><img src="twitter.png" alt="Twitter"> Twitter</a>
-                                        <a href="#"><img src="linkedin.png" alt="LinkedIn"> LinkedIn</a>
-                                        <a href="#"><img src="youtube.png" alt="YouTube"> YouTube</a>
+                                <a href="#"><h1>Contact Us</h1></a>
+                                <a href="#"><img src="image/Instagram.jpeg" alt="Instagram"> Instagram</a>
+                                <a href="#"><img src="image/X Corp_.jpeg" alt="Twitter"> Twitter</a>
+                                <a href="https://in.linkedin.com/"><img src="image/LinkedIn.jpeg" alt="LinkedIn"> LinkedIn</a>
+                                <a href="https://www.youtube.com/"><img src="image/Youtube.jpeg" alt="YouTube"> YouTube</a>
                               </div>
                     </div>
 
@@ -112,6 +129,28 @@
                               <a href="#">Terms of Service</a>
                     </div>
           </footer>
+          <script>
+            // This fetch assumes you have a route like `/api/user/profile` that sends user data
+            async function loadUserData() {
+                   try {
+                          const res = await fetch('/api/user/profile', {
+                          method: 'GET',
+                          credentials: 'include'
+                        });
+                        const data = await res.json();
+                        if (res.ok) {
+                          document.getElementById('welcome-name').textContent = data.username;
+                        } else {
+                                window.location.href = '/login.html';
+                               }
+                        } catch (err) {
+                                      console.error('❌ Error loading user profile:', err);
+                                      window.location.href = '/login.html';
+                                      }
+                        }
+  window.onload = loadUserData;
+  
+          </script>
 
 </body>
 

@@ -1,73 +1,38 @@
-/*const toggleForm = document.getElementById('toggle-form');
-const loginContainer = document.querySelector('.form-container');
-const registrationContainer = document.getElementById('registration-container');
-
-toggleForm.addEventListener('click', () => {
-          if (registrationContainer.style.display === 'none') {
-                    registrationContainer.style.display = 'flex';
-                    loginContainer.style.display = 'none';
-                    toggleForm.textContent = 'Already a user? Login';
-          } else {
-                    registrationContainer.style.display = 'none';
-                    loginContainer.style.display = 'flex';
-                    toggleForm.textContent = 'New User? Register';
-          }
-});
-*/
-
-
-// contact.js
+// Contact form submission (if present)
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
+    if (form) {
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
 
-    form.addEventListener("submit", async function (event) {
-        event.preventDefault(); // Prevent page reload
+            const name = document.querySelector("input[type='text']").value;
+            const email = document.querySelector("input[type='email']").value;
+            const message = document.querySelector("textarea").value;
 
-        // Get form fields
-        const name = document.querySelector("input[type='text']").value;
-        const email = document.querySelector("input[type='email']").value;
-        const message = document.querySelector("textarea").value;
-
-        if (!name || !email || !message) {
-            alert("Please fill out all fields.");
-            return;
-        }
-
-        // Send data to backend
-        try {
-            const response = await fetch("/contact", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, message }),
-            });
-
-            const result = await response.text();
-            alert(result); // Show server response
-
-            if (response.ok) {
-                form.reset(); // Clear the form
+            if (!name || !email || !message) {
+                alert("Please fill out all fields.");
+                return;
             }
-        } catch (error) {
-            console.error("❌ Contact form submission failed:", error);
-            alert("Submission failed. Try again later.");
-        }
-    });
-});
 
+            try {
+                const response = await fetch("/contact", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, message }),
+                });
 
-/*
-if (localStorage.getItem('userToken')) {
-          localStorage.removeItem('userToken'); // Clear user session from localStorage
-}
+                const result = await response.text();
+                alert(result);
 
+                if (response.ok) form.reset();
+            } catch (error) {
+                console.error("❌ Contact form submission failed:", error);
+                alert("Submission failed. Try again later.");
+            }
+        });
+    }
 
-if (sessionStorage.getItem('userToken')) {
-          sessionStorage.removeItem('userToken'); // Clear user session from sessionStorage
-}
-*/
-
-document.addEventListener("DOMContentLoaded", function () {
-    // Create a floating box for displaying dimensions
+    // Floating dimension display
     const dimensionBox = document.createElement("div");
     dimensionBox.style.position = "fixed";
     dimensionBox.style.bottom = "10px";
@@ -81,16 +46,48 @@ document.addEventListener("DOMContentLoaded", function () {
     dimensionBox.style.fontFamily = "Arial, sans-serif";
     document.body.appendChild(dimensionBox);
 
-    // Function to update dimensions
     function updateDimensions() {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        dimensionBox.innerText = `Width: ${width}px | Height: ${height}px`;
+        dimensionBox.innerText = `Width: ${window.innerWidth}px | Height: ${window.innerHeight}px`;
     }
 
-    // Initial call and update on resize
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
+
+    // Sticky Navbar
+    const navbar = document.querySelector(".navbar");
+    if (navbar) {
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 50) {
+                navbar.classList.add("sticky");
+            } else {
+                navbar.classList.remove("sticky");
+            }
+        });
+    }
+
+    // Run loadUserData only if the page contains an element that needs it
+    const welcomeName = document.getElementById("welcome-name");
+    if (welcomeName) {
+        loadUserData();
+    }
 });
 
-
+// This fetch assumes you have a route like `/api/user/profile` that sends user data
+async function loadUserData() {
+    try {
+           const res = await fetch('/api/user/profile', {
+           method: 'GET',
+           credentials: 'include'
+         });
+         const data = await res.json();
+         if (res.ok) {
+           document.getElementById('welcome-name').textContent = data.username;
+         } else {
+                 window.location.href = '/login.html';
+                }
+         } catch (err) {
+                       console.error('❌ Error loading user profile:', err);
+                       window.location.href = '/login.html';
+                       }
+         }
+window.onload = loadUserData;

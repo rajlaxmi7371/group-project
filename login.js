@@ -31,8 +31,8 @@ registerForm.addEventListener("submit", async (event) => {
             body: JSON.stringify({ username, email, password }),
         });
 
-        const result = await response.text();
-        alert(result); // Show server response
+        const result = await response.json();
+        alert(result.message); // Show server response
 
         if (response.ok) {
             // Auto-fill login form with registered credentials
@@ -43,11 +43,10 @@ registerForm.addEventListener("submit", async (event) => {
             container.classList.remove("sign-up-mode");
         }
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Registration Error:", error);
         alert("Registration failed. Please try again.");
     }
 });
-
 
 // Handling Login
 const loginForm = document.querySelector(".sign-in-form");
@@ -66,6 +65,7 @@ loginForm.addEventListener("submit", async (event) => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ username, password }),
+            credentials: "include" // Important for session handling
         });
 
         const result = await response.json();
@@ -73,14 +73,60 @@ loginForm.addEventListener("submit", async (event) => {
 
         if (result.success) {
             // Store login session
-            localStorage.setItem("isLoggedIn", "true");
+           localStorage.setItem("isLoggedIn", "true");
+           localStorage.setItem("username", result.username);   // ✅ Add this line
+           localStorage.setItem("email", result.email);         // ✅ Add this line
+         
+           localStorage.setItem("user", JSON.stringify(result));
+
 
             // Redirect to home page
-            window.location.href = "home.html";
+            window.location.href = "home.html"; 
+          
+
+           
+
+           /* // Prevent going back to the login page
+            setTimeout(() => {
+                history.replaceState(null, null, "home.html");
+            }, 500); */
         }
     } catch (error) {
         console.error("Login error:", error);
         alert("Login failed. Please try again.");
     }
 });
+/*
+fetch('/login', { 
+    method: 'POST', 
+    body: JSON.stringify({ username, password }), 
+    headers: { 'Content-Type': 'application/json' }
+})
+.then(response => response.json())
+.then(data => {
+    if (data.success) {
+        window.location.href = "profile.html"; // Redirect to profile
+    } else {
+        alert(data.message);
+    }
+});
+
+localStorage.setItem("data", JSON.stringify({
+    username: data.username,
+    email: data.email
+  }));
+  
+/*
+document.addEventListener("DOMContentLoaded", function () {
+    if (localStorage.getItem("isLoggedIn")) {
+        window.location.href = "/dashboard"; // Redirect to home page if already logged in
+    }
+});
+/*
+function logout() {
+    localStorage.removeItem("isLoggedIn");
+    sessionStorage.clear();
+    window.location.href = "login.html"; // Redirect to login after logout
+}
+*/        
 

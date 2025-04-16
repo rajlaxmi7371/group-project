@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Internships</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .internship-form,
+    .internship-list {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .internship-item {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+
+    .internship-item:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Manage Internships</h1>
+
+  <div class="internship-form">
+    <h2>Add New Internship</h2>
+    <form id="internshipForm">
+      <input type="text" name="title" placeholder="Title" required />
+      <input type="text" name="company" placeholder="Company Name" required />
+      <input type="text" name="location" placeholder="Location" required />
+      <input type="text" name="stipend" placeholder="Stipend" required />
+      <input type="text" name="duration" placeholder="Duration (e.g. 2 months)" />
+      <input type="text" name="skills" placeholder="Skills (comma separated)" />
+      <input type="text" name="category" placeholder="Category (e.g. Web Development)" />
+      <label>Apply By:</label>
+      <input type="date" name="applyBy" id="applyBy" required min="" />
+      <label>Posted On:</label>
+      <input type="date" name="postedOn" id="postedOn" required min="" />
+      <textarea name="description" placeholder="Description" rows="4"></textarea>
+      <input type="number" name="openings" placeholder="Number of openings" />
+      <select name="type">
+        <option value="Internship">Internship</option>
+        <option value="Part-Time">Part-Time</option>
+      </select>
+      <button type="submit">Add Internship</button>
+    </form>
+  </div>
+
+  <div class="internship-list">
+    <h2>Current Internships</h2>
+    <div id="internships"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("internshipForm");
+    const internshipsContainer = document.getElementById("internships");
+
+    // Load internships
+    async function loadInternships() {
+      try {
+        const res = await fetch('/api/internships');
+        const data = await res.json();
+        internshipsContainer.innerHTML = data.map(item => `
+          <div class="internship-item">
+            <strong>${item.title}</strong> at ${item.company} <br/>
+            <small>${item.location} | ${item.stipend} | ${item.type}</small><br/>
+            <small>Apply By: ${item.applyBy ? new Date(item.applyBy).toLocaleDateString() : 'N/A'} | Posted On: ${item.postedOn ? new Date(item.postedOn).toLocaleDateString() : 'N/A'}</small>
+          </div>
+        `).join('');
+      } catch (err) {
+        internshipsContainer.innerHTML = "<p>❌ Failed to load internships.</p>";
+      }
+    }
+
+    // Add new internship
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const payload = {};
+      formData.forEach((val, key) => {
+        if (key === "skills") {
+          payload[key] = val.split(',').map(skill => skill.trim());
+        } else {
+          payload[key] = val;
+        }
+      });
+
+      try {
+        const res = await fetch('/api/internships', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        alert(result.message);
+        form.reset();
+        loadInternships();
+      } catch (err) {
+        alert("Failed to add internship.");
+      }
+    });
+    
+  // Set min date for Apply By to today
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("applyBy").setAttribute("min", today);
+  document.getElementById("postedOn").setAttribute("min", today);
+
+    loadInternships();
+  </script>
+
+</body>
+</html>

@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
              <p><strong>Hiring Start:</strong> ${company.hiringStart}</p>
             <p><strong>Location:</strong> ${company.location}</p>
             <p><storng>Hiring Data:</strong>  ${new Date(company.hiringStartDate).toLocaleDateString()}</p>
-            <a href="/company/${company._id}" class="view-details">View Details →</a>
+            <a href="company-details.html?id=${company._id}" class="view-details">View Details →</a>
         `;
         
         
@@ -47,4 +47,4 @@ async function loadUserData() {
                        window.location.href = '/login.html';
                        }
          }
-window.onload = loadUserData;
+         window.onload = loadUserData;

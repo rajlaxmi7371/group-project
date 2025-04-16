@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Details</title>
+  <link rel="stylesheet" href="next.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .company-header img {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    .company-header h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #333;
+    }
+    .company-details p {
+      margin: 10px 0;
+      font-size: 16px;
+      color: #444;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 8px 14px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .back-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="companyDetails">
+    <!-- Content will be injected here -->
+  </div>
+
+  <script>
+    async function loadCompanyDetails() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+
+      if (!id) {
+        document.getElementById("companyDetails").innerHTML = "<p>❌ Company ID not found in URL.</p>";
+        return;
+      }
+
+      try {
+        const res = await fetch(`/companies/${id}`); // use direct ID fetch route
+        const company = await res.json();
+
+        if (!company || !company.name) {
+          document.getElementById("companyDetails").innerHTML = "<p>❌ Company not found.</p>";
+          return;
+        }
+
+        document.getElementById("companyDetails").innerHTML = `
+          <div class="company-header">
+            <img src="${company.logo || 'default-logo.png'}" alt="${company.name} logo">
+            <h1>${company.name}</h1>
+          </div>
+          <div class="company-details">
+            <p><strong>Description:</strong> ${company.description}</p>
+            <p><strong>Founded:</strong> ${company.founded}</p>
+            <p><strong>Location:</strong> ${company.location}</p>
+            <p><strong>Website:</strong> <a href="${company.website}" target="_blank">${company.website}</a></p>
+            <p><strong>Hiring Start Date:</strong> ${new Date(company.hiringStartDate).toLocaleDateString()}</p>
+          </div>
+          <a href="companies.html" class="back-btn">← Back to Companies</a>
+        `;
+      } catch (err) {
+        console.error(err);
+        document.getElementById("companyDetails").innerHTML = "<p>❌ Error loading company details.</p>";
+      }
+    }
+
+    loadCompanyDetails();
+  </script>
+</body>
+</html>

@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Floating dimension display
+    /*
     const dimensionBox = document.createElement("div");
     dimensionBox.style.position = "fixed";
     dimensionBox.style.bottom = "10px";
@@ -52,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
-
+*/
     // Sticky Navbar
     const navbar = document.querySelector(".navbar");
     if (navbar) {
@@ -90,4 +91,9 @@ async function loadUserData() {
                        window.location.href = '/login.html';
                        }
          }
-window.onload = loadUserData;
+             // Only auto-load profile on certain pages, not index.html
+            if (!window.location.pathname.includes("index.html") && 
+                !window.location.pathname === "/") {
+                window.onload = loadUserData;
+               }
+

@@ -126,13 +126,15 @@ const companySchema = new mongoose.Schema({
 const Company = mongoose.model("Company", companySchema);
 
 // Routes 
+
 app.get('/', (req, res) => {
-  console.log("⚡ Serving index.html");
-  res.sendFile(path.join(__dirname, 'index.html'));
+  console.log("🧠 User session:", req.session.user);
+  const page = req.session.user ? 'index.html' : 'login.html';
+  console.log(`⚡ Serving ${page}`);
+  res.sendFile(path.join(__dirname, page));
 });
 
-/*
-app.get('/', (req, res) => {
+/*app.get('/', (req, res) => {
   if (req.session.user) { 
   // If user is logged in, render index page 
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -140,12 +142,12 @@ app.get('/', (req, res) => {
     // If user is not logged in, redirect to login page
     res.sendFile(path.join(__dirname, 'login.html'));
   }
- });*/
+ });
 
 app.get('/admin-feedbacks', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin-feedback.html'));
 });
-
+*/
 
 // 🧹 Auto-delete expired internships
 async function deleteExpiredInternships() {
@@ -168,7 +170,7 @@ app.post('/admin-login', async (req, res) => {
   const isMatch = await bcrypt.compare(password, admin.password);
   if (!isMatch) return res.json({ success: false, message: "Incorrect password" });
 
-  req.session.admin = { username: admin.username };
+  req.session.user = { username: admin.username, role: "admin" };
   res.json({ success: true, message: "Admin login successful" });
 });
 
@@ -194,12 +196,13 @@ app.post('/admin-login', async (req, res) => {
 });*/
 
 app.get('/get-admin', (req, res) => {
-  if (req.session && req.session.admin) {
-    res.json(req.session.admin);
+  if (req.session && req.session.user?.role === "admin") {
+    res.json(req.session.user);
   } else {
     res.status(401).json({ message: 'Not logged in as admin' });
   }
 });
+
 
 // Register User
 app.post('/post', async (req, res) => {
@@ -512,6 +515,60 @@ app.get('/companies', async (req, res) => {
     res.status(500).json({ success: false, message: "Server error. Try again later." });
   }
 });
+
+// Add this route to your server.js file
+// Add this route to your server.js file
+
+// 🔐 Middleware to protect admin-only routes
+function isAdmin(req, res, next) {
+  if (req.session.user && req.session.user.role === "admin") {
+    return next();
+  }
+  return res.status(403).json({ message: "Access denied. Admins only." });
+}
+
+// ✅ Get single company by ID
+app.get("/companies/:id", async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid company ID" });
+    }
+    const company = await Company.findById(req.params.id);
+    
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+    res.json(company);
+  } catch (error) {
+    console.error("Error fetching company by ID:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ Admin-only route to create new company
+app.post("/companies", isAdmin, async (req, res) => {
+  try {
+    const newCompany = new Company(req.body);
+    await newCompany.save();
+    res.status(201).json({ message: "Company added successfully!" });
+  } catch (error) {
+    console.error("Error adding company:", error);
+    res.status(500).json({ message: "Failed to add company." });
+  }
+});
+
+app.put('/companies/:id', isAdmin, async (req, res) => {
+  try {
+    const updated = await Company.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updated) return res.status(404).json({ message: 'Company not found' });
+    res.json({ message: 'Company updated successfully!', company: updated });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to update company' });
+  }
+});
+
+
 
 // Feedback
 app.use('/api/feedback', router);

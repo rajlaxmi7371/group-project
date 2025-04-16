@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Company</title>
+  <link rel="stylesheet" href="next.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px 20px;
+      background-color: #f4f6f9;
+    }
+    .form-container {
+      background: #fff;
+      max-width: 600px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #28a745;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .message {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Edit Company</h2>
+    <form id="editForm">
+      <div class="form-group">
+        <label for="name">Company Name</label>
+        <input type="text" id="name" required />
+      </div>
+      <div class="form-group">
+        <label for="logo">Logo URL</label>
+        <input type="text" id="logo" />
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="founded">Founded</label>
+        <input type="text" id="founded" />
+      </div>
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" />
+      </div>
+      <div class="form-group">
+        <label for="website">Website</label>
+        <input type="url" id="website" />
+      </div>
+      <div class="form-group">
+        <label for="hiringStartDate">Hiring Start Date</label>
+        <input type="date" id="hiringStartDate" required />
+      </div>
+      <button type="submit">Update Company</button>
+    </form>
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    const id = new URLSearchParams(window.location.search).get("id");
+
+    async function loadCompanyData() {
+      const res = await fetch(`/companies/${id}`);
+      const data = await res.json();
+      document.getElementById("name").value = data.name;
+      document.getElementById("logo").value = data.logo;
+      document.getElementById("description").value = data.description;
+      document.getElementById("founded").value = data.founded;
+      document.getElementById("location").value = data.location;
+      document.getElementById("website").value = data.website;
+      document.getElementById("hiringStartDate").value = data.hiringStartDate?.split("T")[0];
+    }
+
+    document.getElementById("editForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const company = {
+        name: document.getElementById("name").value,
+        logo: document.getElementById("logo").value,
+        description: document.getElementById("description").value,
+        founded: document.getElementById("founded").value,
+        location: document.getElementById("location").value,
+        website: document.getElementById("website").value,
+        hiringStartDate: document.getElementById("hiringStartDate").value
+      };
+
+      const res = await fetch(`/companies/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(company)
+      });
+
+      const result = await res.json();
+      document.getElementById("message").textContent = result.message || "Updated successfully!";
+    });
+
+    loadCompanyData();
+  </script>
+</body>
+</html>

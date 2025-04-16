@@ -34,6 +34,11 @@ body {
   justify-content: space-between;
 }
 
+.auth-buttons {
+  display: flex;
+  gap: 15px;
+}
+
 .navbar.sticky {
     background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
@@ -724,6 +729,7 @@ body {
     --viewport-height: 100vh;
 }
 
+/*
 .dimension-box {
     position: fixed;
     bottom: 10px;
@@ -735,6 +741,10 @@ body {
     font-size: 14px;
     font-family: Arial, sans-serif;
     z-index: 9999;
+}
+*/
+.dimension-box {
+  display: none;
 }
 
 /* ChatBox */  

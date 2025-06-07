@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feedback | NEXTSTEP</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #222;
+    }
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    textarea {
+      height: 120px;
+      resize: vertical;
+    }
+    button {
+      background-color: black;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .featured-feedbacks {
+      margin-top: 40px;
+    }
+    .feedback-card {
+      background: #f1f1f1;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .feedback-card p {
+      margin: 0;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Submit Your Feedback</h2>
+    
+    <form id="feedbackForm" method="POST" action="/api/feedback/submit-feedback">
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="email" id="email" placeholder="Your Email" required />
+      <textarea id="feedbackText" placeholder="Write your experience, thoughts, or suggestions..." required></textarea>
+      <label for="rating">Rate your experience:</label><br>
+      <select id="rating" required>
+        <option value="">Choose</option>
+        <option value="5">★★★★★ - Excellent</option>
+        <option value="4">★★★★☆ - Good</option>
+        <option value="3">★★★☆☆ - Average</option>
+        <option value="2">★★☆☆☆ - Poor</option>
+        <option value="1">★☆☆☆☆ - Terrible</option>
+      </select>
+
+      <button type="submit">Submit Feedback</button>
+    </form>
+
+    <!-- ✅ Response messages go here -->
+    <div id="feedbackResponse" style="margin-top: 10px;"></div>
+
+    <div class="featured-feedbacks" style="display:none">
+      <h2>Featured Feedbacks</h2>
+      <div id="feedbackList"></div>
+    </div>
+  </div>
+
+  <script>
+    const feedbackForm = document.getElementById("feedbackForm");
+    const feedbackResponse = document.getElementById("feedbackResponse");
+    const feedbackContainer = document.querySelector(".featured-feedbacks");
+    const feedbackList = document.getElementById("feedbackList");
+  
+
+    feedbackForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const message = document.getElementById("feedbackText").value.trim();
+      const rating = document.getElementById("rating").value;
+
+
+      try {
+        const response = await fetch("/api/feedback/submit-feedback", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, email, message, rating }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          feedbackResponse.innerHTML = `<p style="color: green;">${data.message}</p>`;
+          feedbackForm.reset();
+          loadFeaturedFeedbacks();
+        } else {
+          feedbackResponse.innerHTML = `<p style="color: red;">Something went wrong. Please try again later.</p>`;
+        }
+      } catch (error) {
+        console.error("Submission error:", error);
+        feedbackResponse.innerHTML = `<p style="color: red;">Something went wrong. Please try again later.</p>`;
+      }
+    });
+
+    // ✅ Load featured feedbacks
+    async function loadFeaturedFeedbacks() {
+      try {
+        const response = await fetch("/api/feedback/featured");
+        const feedbacks = await response.json();
+
+        feedbackList.innerHTML = ""; // Clear previous
+
+        if (feedbacks.length === 0) {
+          feedbackContainer.style.display = "none";
+          return;
+        }
+
+        feedbackContainer.style.display = "block"; // Show featured section
+
+        feedbacks.forEach(fb => {
+          const div = document.createElement("div");
+          div.className = "feedback-card";
+          div.innerHTML = `<p><strong>${fb.name}</strong></p><p>${fb.message}</p>`;
+          feedbackList.appendChild(div);
+        });
+      } catch (error) {
+        console.error("Error loading feedbacks:", error);
+        feedbackList.innerHTML = "<p>Error loading feedbacks.</p>";
+      }
+    }
+
+    // Call on load
+    loadFeaturedFeedbacks();
+  </script>
+</body>
+</html>

@@ -185,6 +185,7 @@ group-project/
 │   ├── forget-password.html
 │   ├── reset-password.html
 │   └── logout.html
+|   |_  company-details.html
 
 ├── admin/
 │   ├── admin-login.html
@@ -193,6 +194,9 @@ group-project/
 │   ├── admin-application.html
 │   ├── admin-manage-internship.html
 │   └── admin-feedback.html
+|   |_  admin-companies.html
+|   |_  admin-company-form.html
+|   |_  admin-edit-campany.html
 
 ├── uploads/                    # Resume files uploaded by users (admin can view/download)
 ├── server/

@@ -1,16 +1,36 @@
-let internships = [];
+/* let internships = [];
 
 async function fetchInternships() {
   const res = await fetch("/api/internships");
   const data = await res.json();
 
   if (internships.length && data.length > internships.length) {
-    alert("🎉 New internship added!");
+    alert("🎉 New internship  has been added!");
   }
 
   internships = data;
   renderInternships(data);
+} */
+
+  let knownInternshipCount = localStorage.getItem('knownInternshipCount') 
+  ? parseInt(localStorage.getItem('knownInternshipCount')) 
+  : 0;
+
+async function fetchInternships() {
+  const res = await fetch("/api/internships");
+  const data = await res.json();
+
+  if (knownInternshipCount && data.length > knownInternshipCount) {
+    alert(`🎉 ${data.length - knownInternshipCount} new internship(s) added!`);
+  }
+
+  knownInternshipCount = data.length;
+  localStorage.setItem('knownInternshipCount', knownInternshipCount);
+
+  internships = data;
+  renderInternships(data);
 }
+
 
 function renderInternships(data) {
   const container = document.getElementById("internship-list");
@@ -42,11 +62,20 @@ function renderInternships(data) {
 
 document.getElementById("search-input").addEventListener("input", function () {
   const searchText = this.value.toLowerCase();
-  const filtered = internships.filter(i =>
-    i.title.toLowerCase().includes(searchText)
-  );
+  const filtered = internships.filter(i => {
+    return (
+      i.title.toLowerCase().includes(searchText) ||
+      i.company.toLowerCase().includes(searchText) ||
+      i.location.toLowerCase().includes(searchText) ||
+      (i.category && i.category.toLowerCase().includes(searchText)) ||
+      (i.type && i.type.toLowerCase().includes(searchText)) ||
+      (i.description && i.description.toLowerCase().includes(searchText)) ||
+      (i.skills && i.skills.join(', ').toLowerCase().includes(searchText))
+    );
+  });
   renderInternships(filtered);
 });
+
 
 document.getElementById("clear-search").addEventListener("click", function () {
   document.getElementById("search-input").value = "";
@@ -74,6 +103,8 @@ async function loadUserData() {
        window.onload = async function () {
         await loadUserData();     // loads user info
         fetchInternships();       // then loads internship cards
+        setInterval(fetchInternships, 30000); // run every 30 seconds
        };
 
 
+       

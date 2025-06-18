@@ -384,6 +384,21 @@ app.get('/api/internships', async (req, res) => {
   }
 });
 
+// Delete internship by ID
+app.delete('/api/internships/:id', async (req, res) => {
+  try {
+    const result = await Internship.findByIdAndDelete(req.params.id);
+    if (!result) {
+      return res.status(404).json({ message: 'Internship not found' });
+    }
+    res.json({ message: 'Internship deleted successfully' });
+  } catch (err) {
+    console.error('❌ Error deleting internship:', err);
+    res.status(500).json({ message: 'Error deleting internship' });
+  }
+});
+
+
 // File Upload with Multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
@@ -701,5 +716,5 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
 
-/* cd "C:\Users\dell\OneDrive\Desktop\group project\server"
+/* cd server
   node server.js */

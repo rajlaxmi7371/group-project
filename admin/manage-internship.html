@@ -94,21 +94,22 @@
     const internshipsContainer = document.getElementById("internships");
 
     // Load internships
-    async function loadInternships() {
-      try {
-        const res = await fetch('/api/internships');
-        const data = await res.json();
-        internshipsContainer.innerHTML = data.map(item => `
-          <div class="internship-item">
-            <strong>${item.title}</strong> at ${item.company} <br/>
-            <small>${item.location} | ${item.stipend} | ${item.type}</small><br/>
-            <small>Apply By: ${item.applyBy ? new Date(item.applyBy).toLocaleDateString() : 'N/A'} | Posted On: ${item.postedOn ? new Date(item.postedOn).toLocaleDateString() : 'N/A'}</small>
-          </div>
-        `).join('');
-      } catch (err) {
-        internshipsContainer.innerHTML = "<p>❌ Failed to load internships.</p>";
-      }
+   async function loadInternships() {
+    try {
+      const res = await fetch('/api/internships');
+      const data = await res.json();
+      internshipsContainer.innerHTML = data.map(item => `
+        <div class="internship-item">
+          <strong>${item.title}</strong> at ${item.company} <br/>
+          <small>${item.location} | ${item.stipend} | ${item.type}</small><br/>
+          <small>Apply By: ${item.applyBy ? new Date(item.applyBy).toLocaleDateString() : 'N/A'} | Posted On: ${item.postedOn ? new Date(item.postedOn).toLocaleDateString() : 'N/A'}</small><br/>
+          <button onclick="deleteInternship('${item._id}')">Delete</button>
+        </div>
+      `).join('');
+    } catch (err) {
+      internshipsContainer.innerHTML = "<p>❌ Failed to load internships.</p>";
     }
+   }
 
     // Add new internship
     form.addEventListener("submit", async (e) => {
@@ -116,11 +117,15 @@
       const formData = new FormData(form);
       const payload = {};
       formData.forEach((val, key) => {
-        if (key === "skills") {
+         if (key === "skills") {
           payload[key] = val.split(',').map(skill => skill.trim());
-        } else {
+         } else if (key === "openings") {
+          payload[key] = val ? parseInt(val) : null;
+         } else if (key === "applyBy" || key === "postedOn") {
+          payload[key] = val ? new Date(val).toISOString() : null;
+         } else {
           payload[key] = val;
-        }
+         }
       });
 
       try {
@@ -144,6 +149,22 @@
   document.getElementById("postedOn").setAttribute("min", today);
 
     loadInternships();
+
+    async function deleteInternship(id) {
+  if (!confirm("Are you sure you want to delete this internship?")) return;
+
+  try {
+    const res = await fetch(`/api/internships/${id}`, {
+      method: "DELETE"
+    });
+    const result = await res.json();
+    alert(result.message);
+    loadInternships(); // reload after delete
+  } catch (err) {
+    alert("Failed to delete internship.");
+  }
+}
+
   </script>
 
 </body>

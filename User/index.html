@@ -7,6 +7,7 @@
           <title>NEXT STEP</title>
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-v8QQ0YQ3H4K6Ic3PJkym91KoeNT5S3PnDKvqnwqFD1oiqIl653crGZplPdU5KKtHjO0QKcQ2aUlQZYjHczkmGw==" 
           crossorigin="anonymous" referrerpolicy="no-referrer" />
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
           <link rel="stylesheet" href="next.css">
 </head>
 
@@ -169,11 +170,16 @@
           </div>
                        
           <!-- Featured Feedback Section -->
-              <div class="solution-section">
+            <div class="solution-section">
                   <h2>What Our Interns Say</h2>
-                  <div class="cards-container" id="feedbackCardsContainer">
+                  <div class="feedback-carousel-wrapper">
+                    <button class="arrow-btn" id="prevBtn">&#10094;</button> 
+                    <div class="cards-carousel-track" id="feedbackCardsContainer"></div>
+                    <button class="arrow-btn" id="nextBtn">&#10095;</button>
                   </div>
-              </div> 
+                  <div class="carousel-dots" id="feedbackDots"></div>
+              </div>
+
 
             <!--About Us-->
               <div class="about-section">
@@ -274,7 +280,7 @@
               <h3>Raj Laxmi</h3>
               <p>Frontend Developer passionate about clean UI and accessibility, Backend Engineer with a love for APIs and scalable systems.</p>
               <div class="social-links">
-                <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.linkedin.com/in/rajlaxmi1/" target="_blank"><i class="fab fa-linkedin"></i></a>
                 <a href="https://github.com" target="_blank"><i class="fab fa-github"></i></a>
               </div>
             </div>
@@ -362,21 +368,19 @@
 
           <script src="next.js"></script>
           <script>
+          // Chart box
            function toggleChat() {
                 const chatBox = document.getElementById('chatBox');
                 chatBox.style.display = chatBox.style.display === 'block' ? 'none' : 'block';
             }
 
+          // Feedback 
             window.addEventListener('scroll', function () {
                     const button = document.getElementById('feedback-button');
                     let offset = window.scrollY;
                     button.style.transform = `translateY(${offset * 0.05}px)`;
              });
           </script>
-        
-         
-          
-        
 
 </body>
 

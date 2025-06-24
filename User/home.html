@@ -176,10 +176,6 @@
                               </div>
                     </div>
 
-                
-
-
-
                     <div class="wave-background"></div>
                     <div class="image-container">
                               <img src="image/pic1.avif" alt="Students with tablet">
@@ -189,10 +185,15 @@
         
                                   
           <!-- Featured Feedback Section -->
-          <div class="solution-section">
-            <h2>What Our Interns Say</h2>
-            <div class="cards-container" id="feedbackCardsContainer"></div>
-        </div>
+           <div class="solution-section">
+                  <h2>What Our Interns Say</h2>
+                  <div class="feedback-carousel-wrapper">
+                    <button class="arrow-btn" id="prevBtn">&#10094;</button> 
+                    <div class="cards-carousel-track" id="feedbackCardsContainer"></div>
+                    <button class="arrow-btn" id="nextBtn">&#10095;</button>
+                  </div>
+                  <div class="carousel-dots" id="feedbackDots"></div>
+              </div>
 
          <!--Our Team--->
          <div class="team-section">
@@ -238,7 +239,7 @@
               <h3>Isha Jain</h3>
               <p>Frontend Developer with UI and accessibility.</p>
               <div class="social-links">
-                <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://linkedin.com" target="_blank" class="linkedin"><i class="fab fa-linkedin"></i></a>
                 <a href="https://github.com" target="_blank"><i class="fab fa-github"></i></a>
               </div>
             </div>
@@ -292,7 +293,6 @@
 
 
           <script src="next.js"></script>
-    
             <script>
                  // This fetch assumes you have a route like `/api/user/profile` that sends user data
                  async function loadUserData() {
@@ -327,10 +327,11 @@
                         button.style.transform = `translateY(${offset * 0.05}px)`;
                       });
 
+                    // Update username in navbar
                     document.addEventListener("DOMContentLoaded", function () {
                       const name = localStorage.getItem("username") || "User";
                     document.getElementById("navUsername").textContent = "Welcome, " + name;
-                    });
+                    });        
             </script>
             
 </body>
